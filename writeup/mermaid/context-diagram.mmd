@@ -1,0 +1,23 @@
+flowchart LR
+    subgraph External Entities
+        User([👤 User<br/>Study Participant])
+        Admin([🔬 Research Admin<br/>Observer])
+    end
+
+    subgraph System Boundary
+        System[🎯 Nostalgic Persuasive<br/>Recommendation System<br/><br/>• Habit Formation Support<br/>• Nostalgic Content Delivery<br/>• Stress/Emotion Analysis<br/>• Personalized Learning]
+    end
+
+    %% Inbound flows from User
+    User -->|Registration| System
+    User -->|Login Credentials| System
+    User -->|Preferences| System
+    User -->|Daily Logs| System
+    User -->|Feedback| System
+
+    %% Outbound flows to User
+    System -->|Recommendations| User
+
+    %% Outbound flows to Admin
+    System -->|Statistics| Admin
+    System -->|Data Export| Admin

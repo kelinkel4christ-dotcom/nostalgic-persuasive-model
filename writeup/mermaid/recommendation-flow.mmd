@@ -1,0 +1,63 @@
+sequenceDiagram
+    autonumber
+
+    actor User
+    participant UI as Application
+    participant Rec as Recommendation Engine
+    participant StressModel as Stress Detection<br/>(RoBERTa)
+    participant EmotionModel as Emotion Detection<br/>(DistilRoBERTa)
+    participant Bandit as Contextual Bandit<br/>(LinUCB)
+    participant Vectors as Content Embeddings
+    participant DB as Database
+
+    %% User initiates recommendation
+    User->>UI: Request recommendation
+    UI->>Rec: Get recommendation for user
+
+    %% Fetch user context
+    Rec->>DB: Fetch user preferences
+    DB-->>Rec: Birth year, liked movies, liked songs
+
+    Rec->>DB: Fetch latest habit log
+    DB-->>Rec: Last stress level, emotion
+
+    %% Real-time text analysis (if journal provided)
+    alt Journal text provided
+        Rec->>StressModel: Analyze text
+        Note over StressModel: RoBERTa fine-tuned<br/>for mental health
+        StressModel->>StressModel: Tokenize → Encode → Classify
+        StressModel-->>Rec: Stress score (0.0 - 1.0)
+
+        Rec->>EmotionModel: Analyze text
+        Note over EmotionModel: DistilRoBERTa 7-class<br/>emotion classifier
+        EmotionModel->>EmotionModel: Tokenize → Encode → Classify
+        EmotionModel-->>Rec: Emotion label
+    end
+
+    %% Generate candidates (10+ years old filter at DB level)
+    Rec->>Vectors: Find similar to liked movies
+    Note over Vectors: Cosine similarity on<br/>pre-computed embeddings<br/>(10+ years old only)
+    Vectors-->>Rec: Movie candidates
+
+    Rec->>Vectors: Find similar to liked songs
+    Vectors-->>Rec: Song candidates
+
+    %% Calculate nostalgia score per candidate
+    Rec->>Rec: Calculate nostalgia score per candidate
+    Note over Rec: personal × (0.7 + 0.3 × popularity)<br/>+ cultural (if pre-birth)
+
+    %% Filter by nostalgia score
+    Rec->>Rec: Filter candidates by score
+
+    %% Contextual Bandit selection
+    Rec->>Bandit: Select from candidates
+    Note over Bandit: Context = [stress, emotion,<br/>positive_rate, birth_year]
+    Bandit->>Bandit: Build context vector
+    Bandit->>Bandit: Compute UCB score per arm
+    Bandit->>Bandit: Select best arm (explore vs exploit)
+    Bandit->>Bandit: Stochastic pick from top 5<br/>within selected arm
+    Bandit-->>Rec: Selected content
+
+    %% Return recommendation
+    Rec-->>UI: Song or Movie
+    UI-->>User: Display recommendation

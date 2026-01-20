@@ -1,0 +1,26 @@
+services:
+  movie-preprocessor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../dataset/ml-32m:/dataset/ml-32m
+    command: python -u preprocess_movies.py
+
+  movie-recommender-train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../dataset/ml-32m:/dataset/ml-32m
+      - ../models/movie_recommender:/models/movie_recommender
+    command: python -u movie_training.py
+
+  movie-recommender-evaluate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../dataset/ml-32m:/dataset/ml-32m
+      - ../models/movie_recommender:/models/movie_recommender
+    command: python -u movie_evaluation.py
