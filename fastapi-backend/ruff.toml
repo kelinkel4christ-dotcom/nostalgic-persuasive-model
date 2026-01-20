@@ -1,0 +1,19 @@
+[lint]
+exclude = [
+    "tests/**",
+    "**/__pycache__/**",
+    "**/.pixi/**",
+    "**/*.pyc",
+    "**/.git/**",
+    "**/pixi.lock"
+]
+
+[format]
+exclude = [
+    "tests/**",
+    "**/__pycache__/**",
+    "**/.pixi/**",
+    "**/*.pyc",
+    "**/.git/**",
+    "**/pixi.lock"
+]

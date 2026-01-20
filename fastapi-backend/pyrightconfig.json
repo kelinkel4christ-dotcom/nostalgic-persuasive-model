@@ -1,0 +1,11 @@
+{
+  "typeCheckingMode": "basic",
+  "exclude": [
+    "tests/**",
+    "**/__pycache__/**",
+    "**/.pixi/**",
+    "**/*.pyc",
+    "**/.git/**",
+    "**/pixi.lock"
+  ]
+}

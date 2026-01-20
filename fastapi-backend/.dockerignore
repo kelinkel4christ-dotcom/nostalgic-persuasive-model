@@ -1,0 +1,16 @@
+__pycache__
+.pixi
+.git
+.gitignore
+tests/
+*.pyc
+.pytest_cache
+.coverage
+htmlcov/
+*.txt
+!requirements.txt
+*.backup
+pixi.*
+pyrightconfig.json
+ruff.toml
+.gitattributes
